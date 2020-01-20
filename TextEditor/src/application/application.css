@@ -1,0 +1,13 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.text-area {
+     -fx-font-family: Helvetica;
+     -fx-text-fill: rgb(33, 33, 33);
+     -fx-font-size: 13px;
+}
+
+#counterColumn .scroll-pane {
+	-fx-hbar-policy: never;
+	-fx-vbar-policy: never;
+	-fx-visibility: hidden;
+	-fx-background-color: transparent;
+}
