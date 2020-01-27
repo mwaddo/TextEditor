@@ -1,0 +1,54 @@
+.text-area {
+     -fx-font-family: Helvetica;
+     -fx-text-fill: rgb(33, 33, 33);
+     -fx-font-size: 13px;
+     -fx-background-insets: 0;
+     -fx-background-color: transparent, #2F2F2F, transparent, #2F2F2F;
+}
+
+.text-area .content{
+	-fx-background-color: transparent, #2F2F2F, transparent, #2F2F2F;
+}
+
+#userText {
+	 -fx-color: #2F2F2F;
+     -fx-control-inner-background: #2F2F2F;
+     -fx-text-fill: white;
+     -fx-border-color: #2F2F2F;
+}
+
+#counterColumn {
+	-fx-control-inner-background: #0d0d0d;
+	-fx-text-fill: #547B76;
+	-fx-opacity: .9;
+}
+
+#menuBar {
+	-fx-background-color: #3b3939;
+	-fx-text-color: white;
+	-fx-highlight-fill: #615d5d;
+	-fx-selection-bar: #2b2b2c;
+}
+
+#menuBar .label{
+	-fx-text-fill: white;
+}
+
+#menuBar .context-menu{
+	-fx-background-color: #3b3939; 
+}
+
+#menuBar .menu-item:focused, .menu:focused, .label:focused{
+	-fx-background-color: #2b2b2c;
+}
+
+#menuBar .menu-item:focused .label{
+	-fx-background-color: #2b2b2c;
+}
+
+#counterColumn .scroll-pane {
+	-fx-hbar-policy: never;
+	-fx-vbar-policy: never;
+	-fx-visibility: hidden;
+	-fx-background-color: transparent;
+}

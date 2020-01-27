@@ -9,20 +9,28 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import javafx.application.Platform;
+import javafx.beans.value.WritableDoubleValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -33,6 +41,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -60,6 +69,21 @@ public class Controller implements Initializable {
 	// line counter
 	@FXML
 	public TextArea counterColumn;
+	
+	@FXML
+	public CheckMenuItem lineCounter;
+	
+	@FXML
+	public CheckMenuItem themeDefault;
+	public CheckMenuItem themeDark;
+	public CheckMenuItem themeOrange;
+	
+	CheckMenuItem[] themes = {themeDefault, themeDark, themeOrange};
+	
+	public Object pauseLock = new Object();
+	public boolean exit = false;
+	
+	public File userWorkspace;
 
 	// Created a constantly running thread to update the counterColumn.
 	Thread update = new Thread(new Runnable() {
@@ -87,7 +111,27 @@ public class Controller implements Initializable {
 		update.setDaemon(true);
 		update.start();
 		userText.scrollTopProperty().bindBidirectional(counterColumn.scrollTopProperty());
+		lineCounter.setSelected(true);
 		counterColumn.appendText(String.valueOf(1));
+		themeDefault.setSelected(true);
+		
+		if(new File("src/resources/workspace.txt").exists()) {
+			userWorkspace = new File(initWorkspace());
+		}
+
+//		if(!new File("src/resources/workspace.txt").exists()) {
+//			Alert setWorkspace = new Alert(AlertType.CONFIRMATION);
+//			setWorkspace.setTitle("Setup Workspace");
+//			setWorkspace.setHeaderText("Do you wish to set your workspace?");
+//			setWorkspace.setContentText("We've detected you haven't set up your workspace yet, do you wish to set one up now?");
+//			Optional<ButtonType> result = setWorkspace.showAndWait();
+//			if(result.get() == ButtonType.OK) {
+//				setWorkspace();
+//				System.out.println("Workspace set to" + userWorkspace.getAbsolutePath());
+//			}else {
+//				
+//			}
+//		}
 	}
 
 	// Update continuously.
@@ -118,6 +162,7 @@ public class Controller implements Initializable {
 	public void saveFile() {
 		if (file == null) {
 			FileChooser saveFileChooser = new FileChooser();
+			saveFileChooser.setInitialDirectory(userWorkspace);
 			saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text doc(*.txt)", "*.txt"));
 			file = saveFileChooser.showSaveDialog(ap.getScene().getWindow());
 		}
@@ -138,7 +183,6 @@ public class Controller implements Initializable {
 				e.printStackTrace();
 			}
 		}
-		drawCounter();
 
 	}
 
@@ -151,6 +195,7 @@ public class Controller implements Initializable {
 	@FXML
 	public void openFile() {
 		FileChooser openFileChooser = new FileChooser();
+		openFileChooser.setInitialDirectory(userWorkspace);
 		openFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text doc(*.txt)", "*.txt"));
 		file = openFileChooser.showOpenDialog(ap.getScene().getWindow());
 
@@ -175,7 +220,6 @@ public class Controller implements Initializable {
 				}
 			}
 		}
-		drawCounter();
 	}
 
 	// Constantly updating the number of lines in the userText text area. Loops
@@ -228,5 +272,109 @@ public class Controller implements Initializable {
 		for (int i = 1; i <= currentRowCount; i++) {
 			counterColumn.appendText(String.valueOf(i) + "\n");
 		}
+	}
+	
+	// WIP toggle for the line counter
+	@FXML
+	public void lineCounterToggle(){
+		if(lineCounter.isSelected() == false) {
+			try {
+				synchronized(update) {
+					update.wait();
+
+				}
+			} catch (InterruptedException e) {
+				System.out.println("InterruptedException");
+				e.printStackTrace();
+			}
+			counterColumn.clear();
+			counterColumn.setVisible(false);
+			userText.setPrefWidth(800);
+			counterColumn.setPrefWidth(0);
+		}else {
+			synchronized(update) {
+				update.notify();
+			}
+			counterColumn.setVisible(true);
+			counterColumn.setPrefWidth(24);
+			userText.setPrefWidth(776);
+		}
+	}
+	
+	@FXML
+	public void defaultSelected() {
+		ArrayList<CheckMenuItem> themes = initThemes();
+		
+		for(int i = 0; i < themes.size(); i++) {
+			System.out.println(i);
+			System.out.println(themes.get(i).getId());
+			themes.get(i).setSelected(false);
+		}
+		themeDefault.setSelected(true);
+		ap.getStylesheets().clear();
+		ap.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		System.out.println("Switching to Default");
+	}
+	
+	@FXML
+	public void darkSelected() {
+		ArrayList<CheckMenuItem> themes = initThemes();
+		
+		for(int i = 0; i < themes.size(); i++) {
+			System.out.println(i);
+			System.out.println(themes.get(i).getId());
+			themes.get(i).setSelected(false);
+		}
+		themeDark.setSelected(true);
+		ap.getStylesheets().clear();
+		ap.getStylesheets().add(getClass().getResource("darkmode.css").toExternalForm());
+		System.out.println("Switching to Darkmode");
+	}
+	
+	public ArrayList<CheckMenuItem> initThemes() {
+		ArrayList<CheckMenuItem> themes = new ArrayList<CheckMenuItem>();
+		themes.add(themeDark);
+		themes.add(themeDefault);
+		themes.add(themeOrange);
+		
+		return themes;
+	}
+	
+	@FXML
+	public void setWorkspace() {
+		DirectoryChooser workspaceChooser = new DirectoryChooser();
+		File selectedWorkspace = workspaceChooser.showDialog(ap.getScene().getWindow());
+		String workspacePath = selectedWorkspace.getAbsolutePath();
+		
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("D:\\git\\TextEditor\\TextEditor\\src\\resources\\workspace.txt")));
+			PrintWriter output = new PrintWriter(writer);
+			output.write(workspacePath);
+			output.flush();
+			output.close();
+		} catch (IOException e) {
+			System.out.println("Error");
+			e.printStackTrace();
+		}
+		
+		userWorkspace = new File(workspacePath);
+	}
+	
+	public String initWorkspace() {
+		File workspaceHolder = new File("src/resources/workspace.txt");
+		String workspacePath = null;
+		try {
+			Scanner reader = new Scanner(workspaceHolder);
+			while(reader.hasNextLine()) {
+				workspacePath = reader.nextLine();
+			}
+			reader.close();
+			return workspacePath;
+		} catch (FileNotFoundException e) {
+			System.out.println("workspace path not set");
+			e.printStackTrace();
+		}
+		System.out.println("workspace path not set");
+		return workspacePath;
 	}
 }

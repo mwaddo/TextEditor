@@ -23,11 +23,25 @@
                 <MenuItem mnemonicParsing="false" onAction="#newFile" text="New" fx:id="new" />
                 <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save" fx:id="save" />
                 <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" fx:id="open" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#setWorkspace" text="Set Workspace" fx:id="setWorkspace" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Edit">
               <items>
                 <MenuItem mnemonicParsing="false" text="Delete" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Window">
+              <items>
+                <Menu mnemonicParsing="false" text="Themes">
+                  <items>
+                    <CheckMenuItem mnemonicParsing="false" onAction="#defaultSelected" text="Default" fx:id="themeDefault" />
+                    <CheckMenuItem mnemonicParsing="false" onAction="#darkSelected" text="Dark Mode" fx:id="themeDark" />
+                    <CheckMenuItem mnemonicParsing="false" text="Orange" fx:id="themeOrange" />
+                  </items>
+                </Menu>
+                <CheckMenuItem id="lineCounter" mnemonicParsing="false" text="Line Counter" fx:id="lineCounter" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">

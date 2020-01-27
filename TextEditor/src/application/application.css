@@ -5,6 +5,13 @@
      -fx-font-size: 13px;
 }
 
+#userText {
+	 -fx-color: #2F2F2F;
+     -fx-control-inner-background: white;
+     -fx-text-fill: black;
+     -fx-border-color: #2F2F2F;
+}
+
 #counterColumn .scroll-pane {
 	-fx-hbar-policy: never;
 	-fx-vbar-policy: never;
