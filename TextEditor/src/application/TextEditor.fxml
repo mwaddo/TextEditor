@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="ap" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.Controller">
+<AnchorPane fx:id="ap" visible="true" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.Controller">
   <!-- TODO Add Nodes -->
   <children>
     <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -13,44 +13,59 @@
         <TextArea fx:id="userText" onKeyPressed="#keyListenerPressed" prefHeight="1055.9999000000025" prefWidth="1872.0" wrapText="true" />
       </center>
       <left>
-        <TextArea fx:id="counterColumn" disable="true" editable="false" prefHeight="576.0000999999975" prefWidth="24.0" style="" wrapText="false" />
+        <TextArea fx:id="counterColumn" disable="true" editable="false" prefHeight="551.0000999999975" prefWidth="24.000099999997474" style="" wrapText="false" />
       </left>
       <top>
-        <MenuBar fx:id="menuBar" minHeight="16.0" prefHeight="24.0" prefWidth="200.0">
-          <menus>
-            <Menu mnemonicParsing="false" text="File">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#newFile" text="New" fx:id="new" />
-                <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save" fx:id="save" />
-                <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" fx:id="open" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#setWorkspace" text="Set Workspace" fx:id="setWorkspace" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Edit">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Delete" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Window">
-              <items>
-                <Menu mnemonicParsing="false" text="Themes">
+        <BorderPane id="tab" prefHeight="49.0" prefWidth="800.0">
+          <center>
+            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab fx:id="tab" content="$null" onSelectionChanged="#tabSelected" text="Untitled" />
+                <Tab content="$null" onSelectionChanged="#createTab" text="+" />
+              </tabs>
+            </TabPane>
+          </center>
+          <left>
+            <Pane fx:id="square" disable="true" prefHeight="25.0" prefWidth="32.000099999997474" visible="true" />
+          </left>
+          <top>
+            <MenuBar fx:id="menuBar" minHeight="16.0" prefHeight="24.0" prefWidth="800.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <CheckMenuItem mnemonicParsing="false" onAction="#defaultSelected" text="Default" fx:id="themeDefault" />
-                    <CheckMenuItem mnemonicParsing="false" onAction="#darkSelected" text="Dark Mode" fx:id="themeDark" />
-                    <CheckMenuItem mnemonicParsing="false" text="Orange" fx:id="themeOrange" />
+                    <MenuItem mnemonicParsing="false" onAction="#newFile" text="New" fx:id="new" />
+                    <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save" fx:id="save" />
+                    <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" fx:id="open" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem mnemonicParsing="false" onAction="#setWorkspace" text="Set Workspace" fx:id="setWorkspace" />
                   </items>
                 </Menu>
-                <CheckMenuItem id="lineCounter" mnemonicParsing="false" text="Line Counter" fx:id="lineCounter" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Help">
-              <items>
-                <MenuItem mnemonicParsing="false" text="About" />
-              </items>
-            </Menu>
-          </menus>
-        </MenuBar>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Window">
+                  <items>
+                    <Menu mnemonicParsing="false" text="Themes">
+                      <items>
+                        <CheckMenuItem mnemonicParsing="false" onAction="#defaultSelected" text="Default" fx:id="themeDefault" />
+                        <CheckMenuItem mnemonicParsing="false" onAction="#darkSelected" text="Dark Mode" fx:id="themeDark" />
+                        <CheckMenuItem mnemonicParsing="false" text="Orange" fx:id="themeOrange" />
+                      </items>
+                    </Menu>
+                    <CheckMenuItem id="lineCounter" mnemonicParsing="false" text="Line Counter" fx:id="lineCounter" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+          </top>
+        </BorderPane>
       </top>
     </BorderPane>
   </children>

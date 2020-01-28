@@ -5,6 +5,14 @@
      -fx-font-size: 13px;
 }
 
+.tab-close-button {
+	-fx-background-color: transparent;
+}
+
+.tab-close-button:hover{
+	-fx-background-color:derive(-fx-mark-color, -30%);
+}
+
 #userText {
 	 -fx-color: #2F2F2F;
      -fx-control-inner-background: white;

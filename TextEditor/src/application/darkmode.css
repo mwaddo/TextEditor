@@ -10,6 +10,27 @@
 	-fx-background-color: transparent, #2F2F2F, transparent, #2F2F2F;
 }
 
+.tab-pane *.tab-header-background{
+	-fx-background-color: #464649;
+}
+
+.tab { 
+	-fx-background-color: #464649;
+}
+
+.tab-label{
+	-fx-text-fill: white;
+}
+
+.tab-close-button:hover{
+	-fx-background-color:white;
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+	-fx-border-style: solid;
+	-fx-border-color: #2a2b2c;
+}
+
 #userText {
 	 -fx-color: #2F2F2F;
      -fx-control-inner-background: #2F2F2F;
@@ -23,8 +44,12 @@
 	-fx-opacity: .9;
 }
 
+#square{
+	-fx-background-color: #464649;
+}
+
 #menuBar {
-	-fx-background-color: #3b3939;
+	-fx-background-color: #515658;
 	-fx-text-color: white;
 	-fx-highlight-fill: #615d5d;
 	-fx-selection-bar: #2b2b2c;
@@ -35,7 +60,7 @@
 }
 
 #menuBar .context-menu{
-	-fx-background-color: #3b3939; 
+	-fx-background-color: #515658; 
 }
 
 #menuBar .menu-item:focused, .menu:focused, .label:focused{

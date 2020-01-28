@@ -18,6 +18,9 @@ import javafx.beans.value.WritableDoubleValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -28,8 +31,13 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -44,6 +52,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Controller implements Initializable {
 	// short cuts
@@ -78,12 +87,16 @@ public class Controller implements Initializable {
 	public CheckMenuItem themeDark;
 	public CheckMenuItem themeOrange;
 	
-	CheckMenuItem[] themes = {themeDefault, themeDark, themeOrange};
+	@FXML
+	public TabPane tabPane;
+	//public Tab tab;
 	
 	public Object pauseLock = new Object();
 	public boolean exit = false;
 	
 	public File userWorkspace;
+	
+	public Button closeButton;
 
 	// Created a constantly running thread to update the counterColumn.
 	Thread update = new Thread(new Runnable() {
@@ -114,6 +127,7 @@ public class Controller implements Initializable {
 		lineCounter.setSelected(true);
 		counterColumn.appendText(String.valueOf(1));
 		themeDefault.setSelected(true);
+		tabPane.setTabClosingPolicy(TabClosingPolicy.SELECTED_TAB);
 		
 		if(new File("src/resources/workspace.txt").exists()) {
 			userWorkspace = new File(initWorkspace());
@@ -172,6 +186,9 @@ public class Controller implements Initializable {
 				filePath = file.getAbsolutePath();
 				Stage primStage = (Stage) ap.getScene().getWindow();
 				primStage.setTitle(filePath);
+				Tab tab = tabPane.getSelectionModel().getSelectedItem();
+				tab.setId(filePath);
+				tab.setText(file.getName());
 
 				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 				PrintWriter output = new PrintWriter(writer);
@@ -203,21 +220,14 @@ public class Controller implements Initializable {
 
 		if (file != null) {
 			if (file.getName().endsWith(".txt")) {
-				try {
-					filePath = file.getAbsolutePath();
-					Stage primStage = (Stage) ap.getScene().getWindow();
-					primStage.setTitle(filePath);
+				filePath = file.getAbsolutePath();
+				Stage primStage = (Stage) ap.getScene().getWindow();
+				primStage.setTitle(filePath);
+				Tab tab = tabPane.getSelectionModel().getSelectedItem();
+				tab.setId(filePath);
+				tab.setText(file.getName());
 
-					Scanner reader = new Scanner(file);
-					while (reader.hasNextLine()) {
-						String current = reader.nextLine();
-						userText.appendText(current + "\n");
-					}
-					reader.close();
-				} catch (FileNotFoundException e) {
-					System.out.println("Could not read file: " + file.getName());
-					e.printStackTrace();
-				}
+				writeToUserText();
 			}
 		}
 	}
@@ -274,7 +284,7 @@ public class Controller implements Initializable {
 		}
 	}
 	
-	// WIP toggle for the line counter
+	// WIP toggle for the line counter. Not added yet.
 	@FXML
 	public void lineCounterToggle(){
 		if(lineCounter.isSelected() == false) {
@@ -306,14 +316,11 @@ public class Controller implements Initializable {
 		ArrayList<CheckMenuItem> themes = initThemes();
 		
 		for(int i = 0; i < themes.size(); i++) {
-			System.out.println(i);
-			System.out.println(themes.get(i).getId());
 			themes.get(i).setSelected(false);
 		}
 		themeDefault.setSelected(true);
 		ap.getStylesheets().clear();
 		ap.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		System.out.println("Switching to Default");
 	}
 	
 	@FXML
@@ -321,14 +328,11 @@ public class Controller implements Initializable {
 		ArrayList<CheckMenuItem> themes = initThemes();
 		
 		for(int i = 0; i < themes.size(); i++) {
-			System.out.println(i);
-			System.out.println(themes.get(i).getId());
 			themes.get(i).setSelected(false);
 		}
 		themeDark.setSelected(true);
 		ap.getStylesheets().clear();
 		ap.getStylesheets().add(getClass().getResource("darkmode.css").toExternalForm());
-		System.out.println("Switching to Darkmode");
 	}
 	
 	public ArrayList<CheckMenuItem> initThemes() {
@@ -361,6 +365,7 @@ public class Controller implements Initializable {
 	}
 	
 	public String initWorkspace() {
+
 		File workspaceHolder = new File("src/resources/workspace.txt");
 		String workspacePath = null;
 		try {
@@ -377,4 +382,48 @@ public class Controller implements Initializable {
 		System.out.println("workspace path not set");
 		return workspacePath;
 	}
+	
+	@FXML
+	public void createTab() {
+		Tab newTab = new Tab("Untitled");
+		EventHandler<Event> tabSelected = new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				tabSelected();
+			}
+		};
+		newTab.setOnSelectionChanged(tabSelected);
+		
+		tabPane.getTabs().add(tabPane.getTabs().size() -1, newTab);
+		tabPane.getSelectionModel().select(tabPane.getTabs().size() -2);
+	}
+	
+	@FXML
+	public void tabSelected() {
+		if(!tabPane.getSelectionModel().getSelectedItem().getText().equals("Untitled")) {
+			file = new File(tabPane.getSelectionModel().getSelectedItem().getId());
+			Stage primStage = (Stage) ap.getScene().getWindow();
+			primStage.setTitle(filePath);
+			userText.clear();
+			writeToUserText();
+		}else {
+			userText.clear();
+		}
+	}
+	
+	public void writeToUserText() {
+		try {
+			Scanner reader = new Scanner(file);
+			while (reader.hasNextLine()) {
+				String current = reader.nextLine();
+				userText.appendText(current + "\n");
+			}
+			reader.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not read file: " + file.getName());
+			e.printStackTrace();
+		}
+	}
+	
+
 }
