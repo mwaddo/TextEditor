@@ -11,6 +11,6 @@ A simple text editor made over the course of winter break that I plan on continu
 - Workspaces
 - Multitab Editor
 ## Installation
-WIP
+**WIP!!** There are features that are not implemented fully yet.
 ## Author
 Bradley Waddington
